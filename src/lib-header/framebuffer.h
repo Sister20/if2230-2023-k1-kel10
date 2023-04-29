@@ -1,11 +1,13 @@
 #ifndef _FRAMEBUFFER_H
 #define _FRAMEBUFFER_H
 
-#include "lib-header/stdtype.h"
+#include "stdtype.h"
 
-#define MEMORY_FRAMEBUFFER (uint8_t *) 0xB8000
+#define MEMORY_FRAMEBUFFER (uint8_t *) 0xC00B8000
 #define CURSOR_PORT_CMD    0x03D4
 #define CURSOR_PORT_DATA   0x03D5
+#define RESOLUTION_WIDTH   80
+#define RESOLUTION_HEIGHT  25
 
 /**
  * Terminal framebuffer
@@ -27,6 +29,8 @@
  */
 void framebuffer_write(uint8_t row, uint8_t col, char c, uint8_t fg, uint8_t bg);
 
+void framebuffer_write_buf(char * buf, uint32_t len, uint8_t color);
+
 /**
  * Set cursor to specified location. Row and column starts from 0
  * 
@@ -42,4 +46,18 @@ void framebuffer_set_cursor(uint8_t r, uint8_t c);
  */
 void framebuffer_clear(void);
 
+/**
+ * @return pos = row * RESOLUTION_WIDTH + col
+ * To obtain the coordinates, just calculate
+ * row = pos / RESOLUTION_WIDTH
+ * col = pos % RESOLUTION_WIDTH
+ * https://wiki.osdev.org/Text_Mode_Cursor
+*/
+uint16_t framebuffer_get_cursor(void);
+
+void framebuffer_new_line(void);
+/**
+ * scroll buffer down to one row
+*/
+void framebuffer_scroll(void);
 #endif
